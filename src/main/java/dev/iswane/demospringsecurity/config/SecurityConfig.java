@@ -13,6 +13,8 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import static org.springframework.security.config.Customizer.*;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -21,7 +23,7 @@ public class SecurityConfig {
     private final CustomUserDetailsService customUserDetailsService;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))
                 .authorizeHttpRequests(auth -> {
@@ -31,7 +33,8 @@ public class SecurityConfig {
                     auth.anyRequest().authenticated();
                 })
                 .headers(header -> header.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
-                .formLogin(Customizer.withDefaults())
+                .oauth2Login(withDefaults())
+                .formLogin(withDefaults())
                 .build();
     }
 
